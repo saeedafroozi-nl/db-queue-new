@@ -1,3 +1,6 @@
+### NEXT_VERSION_TYPE=MAJOR|MINOR|PATCH
+### NEXT_VERSION_DESCRIPTION_BEGIN
+### NEXT_VERSION_DESCRIPTION_END
 ## [16.0.0]() (17-03-2023)
 
 This major release brings performance optimization related to task polling. Thanks to Evgenii Belov.
