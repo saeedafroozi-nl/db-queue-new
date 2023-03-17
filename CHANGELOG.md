@@ -1,5 +1,4 @@
-### NEXT_VERSION_TYPE=MAJOR
-### NEXT_VERSION_DESCRIPTION_BEGIN
+## [16.0.0]() (17-03-2023)
 
 This major release brings performance optimization related to task polling. Thanks to Evgenii Belov.
 
@@ -17,7 +16,6 @@ and returns `List<TaskRecord>` instead of single `TaskRecord`
 
 * Postgresql tests updated to version 11
 
-### NEXT_VERSION_DESCRIPTION_END
 
 ## [15.3.0](https://bitbucket.yooteam.ru/projects/BACKEND-LIBRARIES/repos/db-queue/pull-requests/2) (30-05-2022)
 
