@@ -28,30 +28,30 @@ There are several reasons:
 * At-least-once task processing semantic.
 * Delayed task execution.
 * Strong-typed
-  api ([TaskPayloadTransformer](db-queue-core/src/main/java/ru/yoomoney/tech/dbqueue/api/TaskPayloadTransformer.java))
+  api ([TaskPayloadTransformer](core/src/main/java/ru/yoomoney/tech/dbqueue/api/TaskPayloadTransformer.java))
 * Task processing
-  modes ([ProcessingSettings](db-queue-core/src/main/java/ru/yoomoney/tech/dbqueue/settings/ProcessingSettings.java))
+  modes ([ProcessingSettings](core/src/main/java/ru/yoomoney/tech/dbqueue/settings/ProcessingSettings.java))
 * Task polling
-  settings ([PollSettings](db-queue-core/src/main/java/ru/yoomoney/tech/dbqueue/settings/PollSettings.java))
+  settings ([PollSettings](core/src/main/java/ru/yoomoney/tech/dbqueue/settings/PollSettings.java))
 * Retry strategies in case of
-  errors ([FailureSettings](db-queue-core/src/main/java/ru/yoomoney/tech/dbqueue/settings/FailureSettings.java))
+  errors ([FailureSettings](core/src/main/java/ru/yoomoney/tech/dbqueue/settings/FailureSettings.java))
 * Retry strategies when you need postpone
-  tasks ([ReenqueueSettings](db-queue-core/src/main/java/ru/yoomoney/tech/dbqueue/settings/ReenqueueSettings.java))
+  tasks ([ReenqueueSettings](core/src/main/java/ru/yoomoney/tech/dbqueue/settings/ReenqueueSettings.java))
 * Tracing support
-  via [Brave](https://github.com/openzipkin/brave) ([ExampleTracingConfiguration](db-queue-test/src/test/java/ru/yoomoney/tech/dbqueue/test/ExampleTracingConfiguration.java))
+  via [Brave](https://github.com/openzipkin/brave) ([ExampleTracingConfiguration](example/src/test/java/ru/yoomoney/tech/dbqueue/test/ExampleTracingConfiguration.java))
 * Task event listeners to build up
-  monitoring ([TaskLifecycleListener](db-queue-core/src/main/java/ru/yoomoney/tech/dbqueue/config/TaskLifecycleListener.java)
+  monitoring ([TaskLifecycleListener](core/src/main/java/ru/yoomoney/tech/dbqueue/config/TaskLifecycleListener.java)
   ,
-  [ThreadLifecycleListener](db-queue-core/src/main/java/ru/yoomoney/tech/dbqueue/config/ThreadLifecycleListener.java))
+  [ThreadLifecycleListener](core/src/main/java/ru/yoomoney/tech/dbqueue/config/ThreadLifecycleListener.java))
 * Configuration reload in
-  runtime ([QueueService#updateQueueConfigs](db-queue-core/src/main/java/ru/yoomoney/tech/dbqueue/config/QueueService.java))
+  runtime ([QueueService#updateQueueConfigs](core/src/main/java/ru/yoomoney/tech/dbqueue/config/QueueService.java))
 * Reading queue configuration from file and dynamic reloading when file changed
   ([QueueConfigsReader](src/main/java/ru/yoomoney/tech/dbqueue/settings/QueueConfigsReader.java),
-  [QueueConfigsReloader](db-queue-core/src/main/java/ru/yoomoney/tech/dbqueue/settings/QueueConfigsReloader.java)).
+  [QueueConfigsReloader](core/src/main/java/ru/yoomoney/tech/dbqueue/settings/QueueConfigsReloader.java)).
 * Storing queue tasks in a separate
-  tables ([QueueLocation](db-queue-core/src/main/java/ru/yoomoney/tech/dbqueue/settings/QueueLocation.java)).
+  tables ([QueueLocation](core/src/main/java/ru/yoomoney/tech/dbqueue/settings/QueueLocation.java)).
 * Storing queue tasks in a separate
-  databases ([QueueShard](db-queue-core/src/main/java/ru/yoomoney/tech/dbqueue/config/QueueShard.java)).
+  databases ([QueueShard](core/src/main/java/ru/yoomoney/tech/dbqueue/config/QueueShard.java)).
 * And many other features
 
 The library provides one-time tasks - tasks that are executed once.
@@ -63,20 +63,20 @@ If you need (recurring tasks)/(periodic tasks) - tasks that are executed periodi
 ## How it works?
 
 1. You have a task that you want to process later.
-2. You tell [QueueProducer](db-queue-core/src/main/java/ru/yoomoney/tech/dbqueue/api/QueueProducer.java) to schedule the
+2. You tell [QueueProducer](core/src/main/java/ru/yoomoney/tech/dbqueue/api/QueueProducer.java) to schedule the
    task.
 3. QueueProducer chooses a database shard.
 4. QueueProducer converts the task payload to string representation
-   through [TaskPayloadTransformer](db-queue-core/src/main/java/ru/yoomoney/tech/dbqueue/api/TaskPayloadTransformer.java)
+   through [TaskPayloadTransformer](core/src/main/java/ru/yoomoney/tech/dbqueue/api/TaskPayloadTransformer.java)
    .
 5. QueueProducer inserts the task in the database
-   through [QueueDao](db-queue-core/src/main/java/ru/yoomoney/tech/dbqueue/dao/QueueDao.java).
+   through [QueueDao](core/src/main/java/ru/yoomoney/tech/dbqueue/dao/QueueDao.java).
 6. ... the task has been selected from database at specified time according to queue settings ...
 7. The task payload is converted to typed representation
-   through [TaskPayloadTransformer](db-queue-core/src/main/java/ru/yoomoney/tech/dbqueue/api/TaskPayloadTransformer.java)
+   through [TaskPayloadTransformer](core/src/main/java/ru/yoomoney/tech/dbqueue/api/TaskPayloadTransformer.java)
    .
 8. The task is passed to
-   the [QueueConsumer](db-queue-core/src/main/java/ru/yoomoney/tech/dbqueue/api/QueueConsumer.java) instance in order to
+   the [QueueConsumer](core/src/main/java/ru/yoomoney/tech/dbqueue/api/QueueConsumer.java) instance in order to
    be processed.
 9. You process the task and return processing result.
 10. ... the task is updated according to processing result and queue settings ...
@@ -84,18 +84,18 @@ If you need (recurring tasks)/(periodic tasks) - tasks that are executed periodi
 ## Code configuration
 
 * Simple
-  configuration: [ExampleBasicConfiguration](db-queue-test/src/test/java/ru/yoomoney/tech/dbqueue/test/ExampleBasicConfiguration.java)
+  configuration: [ExampleBasicConfiguration](example/src/test/java/ru/yoomoney/tech/dbqueue/test/ExampleBasicConfiguration.java)
   .
 * Tracing
-  configuration: [ExampleTracingConfiguration](db-queue-test/src/test/java/ru/yoomoney/tech/dbqueue/test/ExampleTracingConfiguration.java)
+  configuration: [ExampleTracingConfiguration](example/src/test/java/ru/yoomoney/tech/dbqueue/test/ExampleTracingConfiguration.java)
 
 The main steps to configure the library:
 
 * Specify a queue configuration
-  through [QueueConfig](db-queue-core/src/main/java/ru/yoomoney/tech/dbqueue/settings/QueueConfig.java).
-* Implement [QueueProducer](db-queue-core/src/main/java/ru/yoomoney/tech/dbqueue/api/QueueProducer.java) interface.
-* Implement [QueueConsumer](db-queue-core/src/main/java/ru/yoomoney/tech/dbqueue/api/QueueConsumer.java) interface.
-* Create [QueueService](db-queue-core/src/main/java/ru/yoomoney/tech/dbqueue/config/QueueService.java).
+  through [QueueConfig](core/src/main/java/ru/yoomoney/tech/dbqueue/settings/QueueConfig.java).
+* Implement [QueueProducer](core/src/main/java/ru/yoomoney/tech/dbqueue/api/QueueProducer.java) interface.
+* Implement [QueueConsumer](core/src/main/java/ru/yoomoney/tech/dbqueue/api/QueueConsumer.java) interface.
+* Create [QueueService](core/src/main/java/ru/yoomoney/tech/dbqueue/config/QueueService.java).
 * Register `QueueConsumer` in `QueueService`
 * Start queues through `QueueService`
 
@@ -224,29 +224,29 @@ CREATE INDEX queue_tasks_name_time_desc_idx
 The library is divided into several modules. Each module contains minimal set of dependencies to easily integrate in any
 project.
 
-* `db-queue-core` module provides base logic and requires `org.slf4j:slf4j-api` library
-* `db-queue-spring` module provides access to database and requires Spring Framework: spring-jdbc and spring-tx. Other
+* `core` module provides base logic and requires `org.slf4j:slf4j-api` library
+* `spring` module provides access to database and requires Spring Framework: spring-jdbc and spring-tx. Other
   features of Spring ecosystem are not in use.
-* `db-queue-brave` module provides tracing support with help of [Brave](https://github.com/openzipkin/brave)
-* `db-queue-test` module provides integration testing across all modules. It might help to figure out how to use the
+* `brave` module provides tracing support with help of [Brave](https://github.com/openzipkin/brave)
+* `example` module provides integration testing across all modules. It might help to figure out how to use the
   library in your code.
 
 ## Project structure
 
-* [api](db-queue-core/src/main/java/ru/yoomoney/tech/dbqueue/api)
+* [api](core/src/main/java/ru/yoomoney/tech/dbqueue/api)
 
 You should provide implementation for interfaces in that package.
 The package contains classes which are involved in processing or enqueueing tasks.
 
-* [settings](db-queue-core/src/main/java/ru/yoomoney/tech/dbqueue/settings)
+* [settings](core/src/main/java/ru/yoomoney/tech/dbqueue/settings)
 
 Queue settings.
 
-* [dao](db-queue-core/src/main/java/ru/yoomoney/tech/dbqueue/dao)
+* [dao](core/src/main/java/ru/yoomoney/tech/dbqueue/dao)
 
 Additional classes for managing storage.
 
-* [config](db-queue-core/src/main/java/ru/yoomoney/tech/dbqueue/config)
+* [config](core/src/main/java/ru/yoomoney/tech/dbqueue/config)
 
 Registration and configuration.
 

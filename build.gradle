@@ -4,13 +4,13 @@ buildscript {
 
 apply plugin: 'yamoney-library-project-plugin'
 
-groupIdSuffix = "common"
+groupIdPrefix = "ru.yoomoney"
+groupIdSuffix = "tech"
 artifactID = 'db-queue'
 
 dependencies {
 
-    api project(':db-queue-core'),
-            project(':db-queue-spring')
+    api project(':core'), project(':spring')
 
 }
 

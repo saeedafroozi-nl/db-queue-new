@@ -1,9 +1,27 @@
-### NEXT_VERSION_TYPE=MAJOR|MINOR|PATCH
+### NEXT_VERSION_TYPE=MAJOR
 ### NEXT_VERSION_DESCRIPTION_BEGIN
+
+This major release brings performance optimization related to task polling. Thanks to Evgenii Belov.
+
+There is a new mandatory setting `PollSettings#getBatchSize`.
+It controls how many tasks are picked from database at once.
+It can be useful to reduce the load on the database.
+For example setting the batch size to 20 with a load of 500 tps helped to reduce the task
+polling time by 13 times. CPU consumption by polling tasks also decreased by an order of magnitude.
+Setting the batch size is supported only in PostgreSQL.
+
+**breaking changes** `PollSettings#getBatchSize` is mandatory setting.
+**breaking changes** `QueuePickTaskDao#pickTask` renamed to `QueuePickTaskDao#pickTasks`
+and returns `List<TaskRecord>` instead of single `TaskRecord`
+**breaking changes** Java updated to version 17
+
+* Postgresql tests updated to version 11
+
 ### NEXT_VERSION_DESCRIPTION_END
+
 ## [15.3.0](https://bitbucket.yooteam.ru/projects/BACKEND-LIBRARIES/repos/db-queue/pull-requests/2) (30-05-2022)
 
-* Перевод на новый gradle: 6.4.1 -> 7.4.1
+* Gradle updated: 6.4.1 -> 7.4.1
 
 ## [15.2.0](https://bitbucket.yooteam.ru/projects/BACKEND-LIBRARIES/repos/db-queue/pull-requests/1) (25-05-2022)
 
