@@ -215,6 +215,8 @@ public class QueueConfigsReader {
      * Representation of {@link PollSettings#getBatchSize()}
      */
     public static final String SETTING_BATCH_SIZE = "batch-size";
+    @Deprecated(forRemoval = true)
+    public static final String SETTING_QUERY_VERSION = "query-version";
     /**
      * Representation of {@link PollSettings#getBetweenTaskTimeout()}
      */
@@ -240,7 +242,7 @@ public class QueueConfigsReader {
 
     private static final Set<String> ALLOWED_SETTINGS = new HashSet<>(Arrays.asList(
             SETTING_PROCESSING_MODE, SETTING_BETWEEN_TASK_TIMEOUT, SETTING_TABLE,
-            SETTING_NO_TASK_TIMEOUT, SETTING_ID_SEQUENCE, SETTING_FATAL_CRASH_TIMEOUT, SETTING_BATCH_SIZE,
+            SETTING_NO_TASK_TIMEOUT, SETTING_ID_SEQUENCE, SETTING_FATAL_CRASH_TIMEOUT, SETTING_BATCH_SIZE, SETTING_QUERY_VERSION,
             SETTING_REENQUEUE_RETRY_DELAY, SETTING_REENQUEUE_RETRY_PLAN, SETTING_REENQUEUE_RETRY_INITIAL_DELAY,
             SETTING_REENQUEUE_RETRY_RATIO, SETTING_REENQUEUE_RETRY_TYPE, SETTING_REENQUEUE_RETRY_STEP,
             SETTING_RETRY_TYPE, SETTING_RETRY_INTERVAL, SETTING_THREAD_COUNT, SETTING_THREAD_COUNT));

@@ -12,6 +12,7 @@ import static ru.yoomoney.tech.dbqueue.settings.QueueConfigsReader.SETTING_BATCH
 import static ru.yoomoney.tech.dbqueue.settings.QueueConfigsReader.SETTING_BETWEEN_TASK_TIMEOUT;
 import static ru.yoomoney.tech.dbqueue.settings.QueueConfigsReader.SETTING_FATAL_CRASH_TIMEOUT;
 import static ru.yoomoney.tech.dbqueue.settings.QueueConfigsReader.SETTING_NO_TASK_TIMEOUT;
+import static ru.yoomoney.tech.dbqueue.settings.QueueConfigsReader.SETTING_QUERY_VERSION;
 
 /**
  * Parser for {@link PollSettings}
@@ -62,6 +63,7 @@ class PollSettingsParser {
                 case SETTING_BETWEEN_TASK_TIMEOUT -> pollSettings.withBetweenTaskTimeout(Duration.parse(value));
                 case SETTING_FATAL_CRASH_TIMEOUT -> pollSettings.withFatalCrashTimeout(Duration.parse(value));
                 case SETTING_BATCH_SIZE -> pollSettings.withBatchSize(Integer.parseInt(value));
+                case SETTING_QUERY_VERSION -> pollSettings.withQueryVersion(Integer.parseInt(value));
                 default -> {
                 }
             }

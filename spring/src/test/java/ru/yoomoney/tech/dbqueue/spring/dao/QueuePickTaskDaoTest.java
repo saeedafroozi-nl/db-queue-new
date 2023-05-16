@@ -255,7 +255,7 @@ public abstract class QueuePickTaskDaoTest {
     protected static PollSettings getPollSettings() {
         return PollSettings.builder().withBetweenTaskTimeout(Duration.ofSeconds(4))
                 .withNoTaskTimeout(Duration.ofSeconds(5)).withFatalCrashTimeout(Duration.ofSeconds(6))
-                .withBatchSize(1).build();
+                .withBatchSize(1).withQueryVersion(0).build();
     }
 
 }

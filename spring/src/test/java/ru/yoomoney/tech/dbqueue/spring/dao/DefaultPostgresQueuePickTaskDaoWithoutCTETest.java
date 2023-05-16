@@ -21,17 +21,17 @@ import static org.hamcrest.CoreMatchers.equalTo;
  * @author Oleg Kandaurov
  * @since 12.10.2019
  */
-public class DefaultPostgresQueuePickTaskDaoTest extends QueuePickTaskDaoTest {
+public class DefaultPostgresQueuePickTaskDaoWithoutCTETest extends QueuePickTaskDaoTest {
 
     @BeforeClass
     public static void beforeClass() {
         PostgresDatabaseInitializer.initialize();
     }
 
-    public DefaultPostgresQueuePickTaskDaoTest() {
+    public DefaultPostgresQueuePickTaskDaoWithoutCTETest() {
         super(new PostgresQueueDao(PostgresDatabaseInitializer.getJdbcTemplate(), PostgresDatabaseInitializer.DEFAULT_SCHEMA),
                 (queueLocation, failureSettings) -> new PostgresQueuePickTaskDao(PostgresDatabaseInitializer.getJdbcTemplate(),
-                        PostgresDatabaseInitializer.DEFAULT_SCHEMA, queueLocation, failureSettings, getPollSettings()),
+                        PostgresDatabaseInitializer.DEFAULT_SCHEMA, queueLocation, failureSettings, pollSettingsWithoutCTE()),
                 PostgresDatabaseInitializer.DEFAULT_TABLE_NAME, PostgresDatabaseInitializer.DEFAULT_SCHEMA,
                 PostgresDatabaseInitializer.getJdbcTemplate(), PostgresDatabaseInitializer.getTransactionTemplate());
     }
@@ -59,5 +59,11 @@ public class DefaultPostgresQueuePickTaskDaoTest extends QueuePickTaskDaoTest {
 
         List<TaskRecord> taskRecords = executeInTransaction(pickTaskDao::pickTasks);
         Assert.assertThat(taskRecords.size(), equalTo(2));
+    }
+
+    protected static PollSettings pollSettingsWithoutCTE() {
+        return PollSettings.builder().withBetweenTaskTimeout(Duration.ofSeconds(4))
+                .withNoTaskTimeout(Duration.ofSeconds(5)).withFatalCrashTimeout(Duration.ofSeconds(6))
+                .withBatchSize(1).withQueryVersion(1).build();
     }
 }

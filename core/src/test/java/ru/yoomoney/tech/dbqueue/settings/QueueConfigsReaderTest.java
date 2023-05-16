@@ -56,7 +56,8 @@ public class QueueConfigsReaderTest {
                         .withBetweenTaskTimeout(Duration.ofSeconds(9))
                         .withNoTaskTimeout(Duration.ofSeconds(99))
                         .withFatalCrashTimeout(Duration.ofSeconds(999))
-                        .withBatchSize(1),
+                        .withBatchSize(1)
+                        .withQueryVersion(0),
                 () -> FailureSettings.builder()
                         .withRetryInterval(Duration.ofMinutes(9)).withRetryType(FailRetryType.GEOMETRIC_BACKOFF),
                 () -> ReenqueueSettings.builder()
@@ -87,6 +88,7 @@ public class QueueConfigsReaderTest {
                         .withNoTaskTimeout(Duration.ofSeconds(5L))
                         .withFatalCrashTimeout(Duration.ofSeconds(999))
                         .withBatchSize(1)
+                        .withQueryVersion(0)
                         .build()));
     }
 
@@ -109,6 +111,7 @@ public class QueueConfigsReaderTest {
                 "q.testQueue.no-task-timeout=PT5S",
                 "q.testQueue.fatal-crash-timeout=PT1H",
                 "q.testQueue.batch-size=2",
+                "q.testQueue.query-version=0",
                 "q.testQueue.thread-count=3",
                 "q.testQueue.retry-type=linear",
                 "q.testQueue.retry-interval=PT30S",
@@ -135,6 +138,7 @@ public class QueueConfigsReaderTest {
                                         .withNoTaskTimeout(Duration.ofSeconds(5L))
                                         .withFatalCrashTimeout(Duration.ofHours(1))
                                         .withBatchSize(2)
+                                        .withQueryVersion(0)
                                         .build())
                                 .withFailureSettings(FailureSettings.builder()
                                         .withRetryType(FailRetryType.LINEAR_BACKOFF)
@@ -245,6 +249,7 @@ public class QueueConfigsReaderTest {
                         .withBetweenTaskTimeout(Duration.ofSeconds(1L))
                         .withNoTaskTimeout(Duration.ofSeconds(10L))
                         .withBatchSize(1)
+                        .withQueryVersion(0)
                         .withFatalCrashTimeout(Duration.ofSeconds(2L)).build()));
     }
 

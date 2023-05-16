@@ -35,7 +35,8 @@ public class TestFixtures {
                 .withBetweenTaskTimeout(Duration.ofMillis(0))
                 .withNoTaskTimeout(Duration.ofMillis(0))
                 .withFatalCrashTimeout(Duration.ofSeconds(0))
-                .withBatchSize(1);
+                .withBatchSize(1)
+                .withQueryVersion(0);
     }
 
     public static FailureSettings.Builder createFailureSettings() {

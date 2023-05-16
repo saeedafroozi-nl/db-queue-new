@@ -49,7 +49,8 @@ public class QueueConfigsReloaderTest {
                         .withBetweenTaskTimeout(Duration.ofSeconds(9))
                         .withNoTaskTimeout(Duration.ofSeconds(99))
                         .withFatalCrashTimeout(Duration.ofSeconds(999))
-                        .withBatchSize(1),
+                        .withBatchSize(1)
+                        .withQueryVersion(0),
                 () -> FailureSettings.builder()
                         .withRetryInterval(Duration.ofMinutes(9)).withRetryType(FailRetryType.GEOMETRIC_BACKOFF),
                 () -> ReenqueueSettings.builder()

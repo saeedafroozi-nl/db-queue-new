@@ -298,7 +298,8 @@ public class QueueServiceTest {
                                 .withBetweenTaskTimeout(Duration.ofMillis(0))
                                 .withNoTaskTimeout(Duration.ofMillis(0))
                                 .withFatalCrashTimeout(Duration.ofSeconds(0))
-                                .withBatchSize(1).build())
+                                .withBatchSize(1)
+                                .withQueryVersion(0).build())
                         .withFailureSettings(FailureSettings.builder()
                                 .withRetryType(FailRetryType.GEOMETRIC_BACKOFF)
                                 .withRetryInterval(Duration.ofMinutes(1)).build())
@@ -326,7 +327,8 @@ public class QueueServiceTest {
                                 .withBetweenTaskTimeout(Duration.ofMillis(1))
                                 .withNoTaskTimeout(Duration.ofMillis(2))
                                 .withFatalCrashTimeout(Duration.ofSeconds(3))
-                                .withBatchSize(2).build())
+                                .withBatchSize(2)
+                                .withQueryVersion(1).build())
                         .withFailureSettings(FailureSettings.builder()
                                 .withRetryType(FailRetryType.ARITHMETIC_BACKOFF)
                                 .withRetryInterval(Duration.ofMinutes(2)).build())
@@ -342,7 +344,7 @@ public class QueueServiceTest {
         assertThat(diff.size(), equalTo(1));
         assertThat(diff.get(queueId), equalTo("" +
                 "processingSettings(threadCount=0<1,processingMode=WRAP_IN_TRANSACTION<SEPARATE_TRANSACTIONS)," +
-                "pollSettings(betweenTaskTimeout=PT0.001S<PT0S,noTaskTimeout=PT0.002S<PT0S,fatalCrashTimeout=PT3S<PT0S,batchSize=2<1)," +
+                "pollSettings(betweenTaskTimeout=PT0.001S<PT0S,noTaskTimeout=PT0.002S<PT0S,fatalCrashTimeout=PT3S<PT0S,batchSize=2<1,queryVersion=1<0)," +
                 "failureSettings(retryType=ARITHMETIC_BACKOFF<GEOMETRIC_BACKOFF,retryInterval=PT2M<PT1M)," +
                 "reenqueueSettings(type=FIXED<MANUAL,fixedDelay=PT1M<null)," +
                 "extSettings(two=2<null,one=null<1)"));

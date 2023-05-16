@@ -55,17 +55,19 @@ public class PostgresQueuePickTaskDao implements QueuePickTaskDao {
     ) {
         this.jdbcTemplate = new NamedParameterJdbcTemplate(requireNonNull(jdbcTemplate));
         this.queueTableSchema = requireNonNull(queueTableSchema);
-        pickTasksSql = createPickTasksSql(queueLocation, failureSettings);
+        pickTasksSql = createPickTasksSql(queueLocation, failureSettings, pollSettings);
         pickTaskSqlPlaceholders = new MapSqlParameterSource()
                 .addValue("queueName", queueLocation.getQueueId().asString())
                 .addValue("retryInterval", failureSettings.getRetryInterval().getSeconds())
                 .addValue("batchSize", pollSettings.getBatchSize());
         failureSettings.registerObserver((oldValue, newValue) -> {
-            pickTasksSql = createPickTasksSql(queueLocation, newValue);
+            pickTasksSql = createPickTasksSql(queueLocation, newValue, pollSettings);
             pickTaskSqlPlaceholders.addValue("retryInterval", newValue.getRetryInterval().getSeconds());
         });
-        pollSettings.registerObserver((oldValue, newValue) ->
-                pickTaskSqlPlaceholders.addValue("batchSize", newValue.getBatchSize()));
+        pollSettings.registerObserver((oldValue, newValue) -> {
+            pickTasksSql = createPickTasksSql(queueLocation, failureSettings, newValue);
+            pickTaskSqlPlaceholders.addValue("batchSize", newValue.getBatchSize());
+        });
     }
 
     @Nonnull
@@ -106,7 +108,43 @@ public class PostgresQueuePickTaskDao implements QueuePickTaskDao {
                 .withExtData(additionalData).build();
     }
 
-    private String createPickTasksSql(@Nonnull QueueLocation location, @Nonnull FailureSettings failureSettings) {
+    private String createPickTasksSql(@Nonnull QueueLocation location, @Nonnull FailureSettings failureSettings,
+                                      @Nonnull PollSettings pollSettings) {
+        if (pollSettings.getQueryVersion() == 0) {
+            return createPickTasksSqlWithCTE(location, failureSettings);
+        } else {
+            return createPickTasksSqlWithoutCTE(location, failureSettings);
+        }
+    }
+
+    private String createPickTasksSqlWithoutCTE(@Nonnull QueueLocation location, @Nonnull FailureSettings failureSettings) {
+        return  "UPDATE " + location.getTableName() + " q " +
+                "SET " +
+                "  " + queueTableSchema.getNextProcessAtField() + " = " +
+                getNextProcessTimeSql(failureSettings.getRetryType(), queueTableSchema) + ", " +
+                "  " + queueTableSchema.getAttemptField() + " = " + queueTableSchema.getAttemptField() + " + 1, " +
+                "  " + queueTableSchema.getTotalAttemptField() + " = " + queueTableSchema.getTotalAttemptField() + " + 1 " +
+                "WHERE q." + queueTableSchema.getIdField() + " IN (" +
+                "SELECT " + queueTableSchema.getIdField() + " " +
+                "FROM " + location.getTableName() + " " +
+                "WHERE " + queueTableSchema.getQueueNameField() + " = :queueName " +
+                "  AND " + queueTableSchema.getNextProcessAtField() + " <= now() " +
+                " ORDER BY " + queueTableSchema.getNextProcessAtField() + " ASC " +
+                "LIMIT :batchSize " +
+                "FOR UPDATE SKIP LOCKED) " +
+                "RETURNING q." + queueTableSchema.getIdField() + ", " +
+                "q." + queueTableSchema.getPayloadField() + ", " +
+                "q." + queueTableSchema.getAttemptField() + ", " +
+                "q." + queueTableSchema.getReenqueueAttemptField() + ", " +
+                "q." + queueTableSchema.getTotalAttemptField() + ", " +
+                "q." + queueTableSchema.getCreatedAtField() + ", " +
+                "q." + queueTableSchema.getNextProcessAtField() +
+                (queueTableSchema.getExtFields().isEmpty() ? "" : queueTableSchema.getExtFields().stream()
+                        .map(field -> "q." + field).collect(Collectors.joining(", ", ", ", "")));
+    }
+
+
+    private String createPickTasksSqlWithCTE(@Nonnull QueueLocation location, @Nonnull FailureSettings failureSettings) {
         return "WITH cte AS (" +
                 "SELECT " + queueTableSchema.getIdField() + " " +
                 "FROM " + location.getTableName() + " " +

@@ -1,6 +1,7 @@
 package ru.yoomoney.tech.dbqueue.settings;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.time.Duration;
 import java.util.Objects;
 import java.util.StringJoiner;
@@ -23,15 +24,19 @@ public class PollSettings extends DynamicSetting<PollSettings> {
     private Duration fatalCrashTimeout;
     @Nonnull
     private Integer batchSize;
+    @Nonnull
+    private Integer queryVersion;
 
     private PollSettings(@Nonnull Duration betweenTaskTimeout,
                          @Nonnull Duration noTaskTimeout,
                          @Nonnull Duration fatalCrashTimeout,
-                         @Nonnull Integer batchSize) {
+                         @Nonnull Integer batchSize,
+                         @Nonnull Integer queryVersion) {
         this.betweenTaskTimeout = requireNonNull(betweenTaskTimeout, "betweenTaskTimeout must not be null");
         this.noTaskTimeout = requireNonNull(noTaskTimeout, "noTaskTimeout must not be null");
         this.fatalCrashTimeout = requireNonNull(fatalCrashTimeout, "fatalCrashTimeout must not be null");
         this.batchSize = requireNonNull(batchSize, "batchSize must not be null");
+        this.queryVersion =  requireNonNull(queryVersion, "queryVersion must not be null");
         if (batchSize < 1) {
             throw new IllegalArgumentException("batchSize must not be less then 1");
         }
@@ -77,6 +82,12 @@ public class PollSettings extends DynamicSetting<PollSettings> {
         return batchSize;
     }
 
+    @Deprecated(forRemoval = true)
+    @Nonnull
+    public Integer getQueryVersion() {
+        return queryVersion;
+    }
+
     /**
      * Create a new builder for poll settings.
      *
@@ -97,12 +108,13 @@ public class PollSettings extends DynamicSetting<PollSettings> {
         PollSettings that = (PollSettings) obj;
         return betweenTaskTimeout.equals(that.betweenTaskTimeout) && noTaskTimeout.equals(that.noTaskTimeout)
                 && fatalCrashTimeout.equals(that.fatalCrashTimeout)
-                && batchSize.equals(that.batchSize);
+                && batchSize.equals(that.batchSize)
+                && queryVersion.equals(that.queryVersion);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(betweenTaskTimeout, noTaskTimeout, fatalCrashTimeout, batchSize);
+        return Objects.hash(betweenTaskTimeout, noTaskTimeout, fatalCrashTimeout, batchSize, queryVersion);
     }
 
     @Override
@@ -112,6 +124,7 @@ public class PollSettings extends DynamicSetting<PollSettings> {
                 ", noTaskTimeout=" + noTaskTimeout +
                 ", fatalCrashTimeout=" + fatalCrashTimeout +
                 ", batchSize=" + batchSize +
+                ", queryVersion=" + queryVersion +
                 '}';
     }
 
@@ -142,6 +155,10 @@ public class PollSettings extends DynamicSetting<PollSettings> {
                 diff.add("batchSize=" +
                         newVal.batchSize + '<' + oldVal.batchSize);
             }
+            if (!Objects.equals(oldVal.batchSize, newVal.batchSize)) {
+                diff.add("queryVersion=" +
+                        newVal.queryVersion + '<' + oldVal.queryVersion);
+            }
             return diff.toString();
         };
     }
@@ -158,6 +175,7 @@ public class PollSettings extends DynamicSetting<PollSettings> {
         this.noTaskTimeout = newValue.noTaskTimeout;
         this.fatalCrashTimeout = newValue.fatalCrashTimeout;
         this.batchSize = newValue.batchSize;
+        this.queryVersion = newValue.queryVersion;
     }
 
     /**
@@ -169,6 +187,7 @@ public class PollSettings extends DynamicSetting<PollSettings> {
         private Duration noTaskTimeout;
         private Duration fatalCrashTimeout;
         private Integer batchSize;
+        private Integer queryVersion = 0;
 
         private Builder() {
         }
@@ -219,13 +238,22 @@ public class PollSettings extends DynamicSetting<PollSettings> {
             return this;
         }
 
+        @Deprecated(forRemoval = true)
+        public Builder withQueryVersion(@Nullable Integer queryVersion) {
+            if (queryVersion != null) {
+                this.queryVersion = queryVersion;
+            }
+            return this;
+        }
+
         /**
          * Create new poll settings object.
          *
          * @return A new poll settings object.
          */
         public PollSettings build() {
-            return new PollSettings(betweenTaskTimeout, noTaskTimeout, fatalCrashTimeout, batchSize);
+            return new PollSettings(betweenTaskTimeout, noTaskTimeout, fatalCrashTimeout, batchSize,
+                    queryVersion);
         }
     }
 }
