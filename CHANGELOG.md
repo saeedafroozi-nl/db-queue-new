@@ -1,7 +1,7 @@
-### NEXT_VERSION_TYPE=PATCH
-### NEXT_VERSION_DESCRIPTION_BEGIN
+## [16.0.1]() (16-05-2023)
+
 Release for testing a new pick task query for PostgreSQL
-### NEXT_VERSION_DESCRIPTION_END
+
 ## [16.0.0]() (17-03-2023)
 
 This major release brings performance optimization related to task polling. Thanks to Evgenii Belov.
