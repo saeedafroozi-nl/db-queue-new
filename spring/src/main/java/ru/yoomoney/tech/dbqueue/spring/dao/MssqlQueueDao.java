@@ -54,7 +54,7 @@ public class MssqlQueueDao implements QueueDao {
         MapSqlParameterSource params = new MapSqlParameterSource()
                 .addValue("queueName", location.getQueueId().asString())
                 .addValue("payload", enqueueParams.getPayload())
-                .addValue("executionDelay", enqueueParams.getExecutionDelay().getSeconds());
+                .addValue("executionDelay", enqueueParams.getExecutionDelay().toMillis());
 
         queueTableSchema.getExtFields().forEach(paramName -> params.addValue(paramName, null));
         enqueueParams.getExtData().forEach(params::addValue);
@@ -82,7 +82,7 @@ public class MssqlQueueDao implements QueueDao {
                 new MapSqlParameterSource()
                         .addValue("id", taskId)
                         .addValue("queueName", location.getQueueId().asString())
-                        .addValue("executionDelay", executionDelay.getSeconds()));
+                        .addValue("executionDelay", executionDelay.toMillis()));
         return updatedRows != 0;
     }
 
@@ -98,7 +98,7 @@ public class MssqlQueueDao implements QueueDao {
                         queueTableSchema.getExtFields().stream().collect(Collectors.joining(", ", ", ", ""))) +
                 ") OUTPUT inserted." + queueTableSchema.getIdField() + " VALUES " +
                 "(" + location.getIdSequence().map(seq -> "NEXT VALUE FOR " + seq + ", ").orElse("") +
-                ":queueName, :payload, dateadd(ss, :executionDelay, SYSDATETIMEOFFSET()), 0, 0" +
+                ":queueName, :payload, dateadd(ms, :executionDelay, SYSDATETIMEOFFSET()), 0, 0" +
                 (queueTableSchema.getExtFields().isEmpty() ? "" : queueTableSchema.getExtFields().stream()
                         .map(field -> ":" + field).collect(Collectors.joining(", ", ", ", ""))) +
                 ")";
@@ -111,7 +111,7 @@ public class MssqlQueueDao implements QueueDao {
 
     private String createReenqueueSql(@Nonnull QueueLocation location) {
         return "UPDATE " + location.getTableName() + " SET " + queueTableSchema.getNextProcessAtField() +
-                " = dateadd(ss, :executionDelay, SYSDATETIMEOFFSET()), " +
+                " = dateadd(ms, :executionDelay, SYSDATETIMEOFFSET()), " +
                 queueTableSchema.getAttemptField() + " = 0, " +
                 queueTableSchema.getReenqueueAttemptField() +
                 " = " + queueTableSchema.getReenqueueAttemptField() + " + 1 " +

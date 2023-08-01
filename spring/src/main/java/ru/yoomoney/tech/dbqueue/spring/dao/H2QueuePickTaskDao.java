@@ -93,7 +93,7 @@ public class H2QueuePickTaskDao implements QueuePickTaskDao {
             int updatedRowCount = jdbcTemplate.update(
                     pickTaskSql,
                     new MapSqlParameterSource()
-                            .addValue("retryInterval", failureSettings.getRetryInterval().getSeconds())
+                            .addValue("retryInterval", failureSettings.getRetryInterval().toMillis())
                             .addValue("taskId", taskId));
 
             if (updatedRowCount != 1) {
@@ -247,11 +247,10 @@ public class H2QueuePickTaskDao implements QueuePickTaskDao {
         Objects.requireNonNull(queueTableSchema, "queue table schema must be not null");
         return switch (failRetryType) {
             case GEOMETRIC_BACKOFF ->
-                    String.format("TIMESTAMPADD(SECOND, POWER(2, %s) * :retryInterval , NOW())", queueTableSchema.getAttemptField());
+                    String.format("TIMESTAMPADD(MILLISECOND, POWER(2, %s) * :retryInterval , NOW())", queueTableSchema.getAttemptField());
             case ARITHMETIC_BACKOFF ->
-                    String.format("TIMESTAMPADD(SECOND, (1 + %s * 2) * :retryInterval, NOW())", queueTableSchema.getAttemptField());
-            case LINEAR_BACKOFF -> "TIMESTAMPADD(SECOND, :retryInterval, NOW())";
-            default -> throw new IllegalStateException("unknown retry type: " + failRetryType);
+                    String.format("TIMESTAMPADD(MILLISECOND, (1 + %s * 2) * :retryInterval, NOW())", queueTableSchema.getAttemptField());
+            case LINEAR_BACKOFF -> "TIMESTAMPADD(MILLISECOND, :retryInterval, NOW())";
         };
     }
 }

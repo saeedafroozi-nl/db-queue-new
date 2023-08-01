@@ -44,7 +44,7 @@ public class H2QueueDao implements QueueDao {
         MapSqlParameterSource params = new MapSqlParameterSource()
                 .addValue("queueName", location.getQueueId().asString())
                 .addValue("payload", enqueueParams.getPayload())
-                .addValue("executionDelay", enqueueParams.getExecutionDelay().getSeconds());
+                .addValue("executionDelay", enqueueParams.getExecutionDelay().toMillis());
 
         queueTableSchema
                 .getExtFields()
@@ -89,7 +89,7 @@ public class H2QueueDao implements QueueDao {
                 new MapSqlParameterSource()
                         .addValue("id", taskId)
                         .addValue("queueName", location.getQueueId().asString())
-                        .addValue("executionDelay", executionDelay.getSeconds()));
+                        .addValue("executionDelay", executionDelay.toMillis()));
         return updatedRows != 0;
     }
 
@@ -107,7 +107,7 @@ public class H2QueueDao implements QueueDao {
                         "   %s " +
                         "   :queueName, " +
                         "   :payload, " +
-                        "   TIMESTAMPADD(SECOND, :executionDelay , NOW()), " +
+                        "   TIMESTAMPADD(MILLISECOND, :executionDelay , NOW()), " +
                         "   0, " +
                         "   0 " +
                         "   %s " +
@@ -154,7 +154,7 @@ public class H2QueueDao implements QueueDao {
         return String.format("" +
                         "UPDATE %s " +
                         "SET " +
-                        "   %s = TIMESTAMPADD(SECOND, :executionDelay , NOW()), " +
+                        "   %s = TIMESTAMPADD(MILLISECOND, :executionDelay , NOW()), " +
                         "   %s = 0, " +
                         "   %s = %s + 1 " +
                         "WHERE %s = :id AND %s = :queueName",

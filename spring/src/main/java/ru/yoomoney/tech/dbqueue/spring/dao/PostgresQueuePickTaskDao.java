@@ -58,11 +58,11 @@ public class PostgresQueuePickTaskDao implements QueuePickTaskDao {
         pickTasksSql = createPickTasksSql(queueLocation, failureSettings, pollSettings);
         pickTaskSqlPlaceholders = new MapSqlParameterSource()
                 .addValue("queueName", queueLocation.getQueueId().asString())
-                .addValue("retryInterval", failureSettings.getRetryInterval().getSeconds())
+                .addValue("retryInterval", failureSettings.getRetryInterval().toMillis())
                 .addValue("batchSize", pollSettings.getBatchSize());
         failureSettings.registerObserver((oldValue, newValue) -> {
             pickTasksSql = createPickTasksSql(queueLocation, newValue, pollSettings);
-            pickTaskSqlPlaceholders.addValue("retryInterval", newValue.getRetryInterval().getSeconds());
+            pickTaskSqlPlaceholders.addValue("retryInterval", newValue.getRetryInterval().toMillis());
         });
         pollSettings.registerObserver((oldValue, newValue) -> {
             pickTasksSql = createPickTasksSql(queueLocation, failureSettings, newValue);
@@ -182,11 +182,10 @@ public class PostgresQueuePickTaskDao implements QueuePickTaskDao {
         requireNonNull(failRetryType);
         return switch (failRetryType) {
             case GEOMETRIC_BACKOFF ->
-                    "now() + power(2, " + queueTableSchema.getAttemptField() + ") * :retryInterval * INTERVAL '1 SECOND'";
+                    "now() + power(2, " + queueTableSchema.getAttemptField() + ") * :retryInterval * INTERVAL '1 MILLISECOND'";
             case ARITHMETIC_BACKOFF ->
-                    "now() + (1 + (" + queueTableSchema.getAttemptField() + " * 2)) * :retryInterval * INTERVAL '1 SECOND'";
-            case LINEAR_BACKOFF -> "now() + :retryInterval * INTERVAL '1 SECOND'";
-            default -> throw new IllegalStateException("unknown retry type: " + failRetryType);
+                    "now() + (1 + (" + queueTableSchema.getAttemptField() + " * 2)) * :retryInterval * INTERVAL '1 MILLISECOND'";
+            case LINEAR_BACKOFF -> "now() + :retryInterval * INTERVAL '1 MILLISECOND'";
         };
     }
 }

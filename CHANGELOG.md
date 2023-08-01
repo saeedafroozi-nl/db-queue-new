@@ -1,5 +1,6 @@
-### NEXT_VERSION_TYPE=MAJOR|MINOR|PATCH
+### NEXT_VERSION_TYPE=MINOR
 ### NEXT_VERSION_DESCRIPTION_BEGIN
+* Changed working with seconds to milliseconds when calculating NextProcessAt field value. Working with second bring to incorrect processing delay if fractional value is used.
 ### NEXT_VERSION_DESCRIPTION_END
 ## [16.0.1]() (16-05-2023)
 
