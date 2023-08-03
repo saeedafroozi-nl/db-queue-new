@@ -51,13 +51,13 @@ public class MssqlQueuePickTaskDao implements QueuePickTaskDao {
         this.queueTableSchema = requireNonNull(queueTableSchema);
         pickTaskSqlPlaceholders = new MapSqlParameterSource()
                 .addValue("queueName", queueLocation.getQueueId().asString())
-                .addValue("retryInterval", failureSettings.getRetryInterval().getSeconds());
+                .addValue("retryInterval", failureSettings.getRetryInterval().toMillis());
         pickTaskSql = createPickTaskSql(queueLocation, failureSettings);
         failureSettings.registerObserver((oldValue, newValue) -> {
             pickTaskSql = createPickTaskSql(queueLocation, newValue);
             pickTaskSqlPlaceholders = new MapSqlParameterSource()
                     .addValue("queueName", queueLocation.getQueueId().asString())
-                    .addValue("retryInterval", newValue.getRetryInterval().getSeconds());
+                    .addValue("retryInterval", newValue.getRetryInterval().toMillis());
         });
         pollSettings.registerObserver((oldValue, newValue) -> {
             if (newValue.getBatchSize() != 1) {
@@ -137,11 +137,10 @@ public class MssqlQueuePickTaskDao implements QueuePickTaskDao {
         requireNonNull(failRetryType);
         return switch (failRetryType) {
             case GEOMETRIC_BACKOFF ->
-                    "dateadd(ss, power(2, " + queueTableSchema.getAttemptField() + ") * :retryInterval, SYSDATETIMEOFFSET())";
+                    "dateadd(ms, power(2, " + queueTableSchema.getAttemptField() + ") * :retryInterval, SYSDATETIMEOFFSET())";
             case ARITHMETIC_BACKOFF ->
-                    "dateadd(ss, (1 + (" + queueTableSchema.getAttemptField() + " * 2)) * :retryInterval, SYSDATETIMEOFFSET())";
-            case LINEAR_BACKOFF -> "dateadd(ss, :retryInterval, SYSDATETIMEOFFSET())";
-            default -> throw new IllegalStateException("unknown retry type: " + failRetryType);
+                    "dateadd(ms, (1 + (" + queueTableSchema.getAttemptField() + " * 2)) * :retryInterval, SYSDATETIMEOFFSET())";
+            case LINEAR_BACKOFF -> "dateadd(ms, :retryInterval, SYSDATETIMEOFFSET())";
         };
     }
 }

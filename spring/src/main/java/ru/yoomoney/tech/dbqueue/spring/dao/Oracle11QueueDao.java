@@ -60,7 +60,7 @@ public class Oracle11QueueDao implements QueueDao {
         MapSqlParameterSource params = new MapSqlParameterSource()
                 .addValue("queueName", location.getQueueId().asString())
                 .addValue("payload", enqueueParams.getPayload())
-                .addValue("executionDelay", enqueueParams.getExecutionDelay().getSeconds())
+                .addValue("executionDelay", enqueueParams.getExecutionDelay().toMillis())
                 .addValue("id", generatedId);
 
         queueTableSchema.getExtFields().forEach(paramName -> params.addValue(paramName, null));
@@ -90,7 +90,7 @@ public class Oracle11QueueDao implements QueueDao {
                 new MapSqlParameterSource()
                         .addValue("id", taskId)
                         .addValue("queueName", location.getQueueId().asString())
-                        .addValue("executionDelay", executionDelay.getSeconds()));
+                        .addValue("executionDelay", executionDelay.toMillis()));
         return updatedRows != 0;
     }
 
@@ -110,7 +110,7 @@ public class Oracle11QueueDao implements QueueDao {
                 (queueTableSchema.getExtFields().isEmpty() ? "" :
                         queueTableSchema.getExtFields().stream().collect(Collectors.joining(", ", ", ", ""))) +
                 ") VALUES " +
-                "(:id, :queueName, :payload, CURRENT_TIMESTAMP + :executionDelay * INTERVAL '1' SECOND, 0, 0" +
+                "(:id, :queueName, :payload, CURRENT_TIMESTAMP + :executionDelay * INTERVAL '0.001' SECOND, 0, 0" +
                 (queueTableSchema.getExtFields().isEmpty() ? "" : queueTableSchema.getExtFields().stream()
                         .map(field -> ":" + field).collect(Collectors.joining(", ", ", ", ""))) +
                 ")";
@@ -118,7 +118,7 @@ public class Oracle11QueueDao implements QueueDao {
 
     private String createReenqueueSql(@Nonnull QueueLocation location) {
         return "UPDATE " + location.getTableName() + " SET " + queueTableSchema.getNextProcessAtField() +
-                " = CURRENT_TIMESTAMP + :executionDelay * INTERVAL '1' SECOND, " +
+                " = CURRENT_TIMESTAMP + :executionDelay * INTERVAL '0.001' SECOND, " +
                 queueTableSchema.getAttemptField() + " = 0, " +
                 queueTableSchema.getReenqueueAttemptField() +
                 " = " + queueTableSchema.getReenqueueAttemptField() + " + 1 " +

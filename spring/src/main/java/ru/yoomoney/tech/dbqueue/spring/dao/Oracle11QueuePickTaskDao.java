@@ -86,7 +86,7 @@ public class Oracle11QueuePickTaskDao implements QueuePickTaskDao {
         public List<TaskRecord> doInCallableStatement(CallableStatement cs) throws SQLException, DataAccessException {
             int inputIndex = 1;
             cs.setString(inputIndex++, queueLocation.getQueueId().asString());
-            cs.setLong(inputIndex++, failureSettings.getRetryInterval().getSeconds());
+            cs.setLong(inputIndex++, failureSettings.getRetryInterval().toMillis());
             cs.registerOutParameter(inputIndex++, Types.BIGINT);
             cs.registerOutParameter(inputIndex++, Types.CLOB);
             cs.registerOutParameter(inputIndex++, Types.BIGINT);
@@ -132,10 +132,9 @@ public class Oracle11QueuePickTaskDao implements QueuePickTaskDao {
     private String getNextProcessTimeSql(@Nonnull FailRetryType failRetryType) {
         Objects.requireNonNull(failRetryType);
         return switch (failRetryType) {
-            case GEOMETRIC_BACKOFF -> "CURRENT_TIMESTAMP + power(2, " + "rattempt) * ? * (INTERVAL '1' SECOND)";
-            case ARITHMETIC_BACKOFF -> "CURRENT_TIMESTAMP + (1 + (" + "rattempt * 2)) * ? * (INTERVAL '1' SECOND)";
-            case LINEAR_BACKOFF -> "CURRENT_TIMESTAMP + ? * (INTERVAL '1' SECOND)";
-            default -> throw new IllegalStateException("unknown retry type: " + failRetryType);
+            case GEOMETRIC_BACKOFF -> "CURRENT_TIMESTAMP + power(2, " + "rattempt) * ? * (INTERVAL '0.001' SECOND)";
+            case ARITHMETIC_BACKOFF -> "CURRENT_TIMESTAMP + (1 + (" + "rattempt * 2)) * ? * (INTERVAL '0.001' SECOND)";
+            case LINEAR_BACKOFF -> "CURRENT_TIMESTAMP + ? * (INTERVAL '0.001' SECOND)";
         };
     }
 
