@@ -1,7 +1,7 @@
-### NEXT_VERSION_TYPE=MINOR
-### NEXT_VERSION_DESCRIPTION_BEGIN
+## [16.1.0](https://bitbucket.yooteam.ru/projects/BACKEND-LIBRARIES/repos/db-queue/pull-requests/6) (03-08-2023)
+
 * Changed working with seconds to milliseconds when calculating NextProcessAt field value. Working with second bring to incorrect processing delay if fractional value is used.
-### NEXT_VERSION_DESCRIPTION_END
+
 ## [16.0.1]() (16-05-2023)
 
 Release for testing a new pick task query for PostgreSQL
