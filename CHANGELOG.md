@@ -1,3 +1,6 @@
+### NEXT_VERSION_TYPE=MAJOR|MINOR|PATCH
+### NEXT_VERSION_DESCRIPTION_BEGIN
+### NEXT_VERSION_DESCRIPTION_END
 ## [16.1.0](https://bitbucket.yooteam.ru/projects/BACKEND-LIBRARIES/repos/db-queue/pull-requests/6) (03-08-2023)
 
 * Changed working with seconds to milliseconds when calculating NextProcessAt field value. Working with second bring to incorrect processing delay if fractional value is used.
