@@ -128,21 +128,6 @@ CREATE INDEX queue_tasks_name_time_desc_idx
 You should always analyze your database workload before applying 
 these recommendations. Settings heavily depends on a hardware, and a load you have.
 
-* Fill Factor 
-
-You need to set a low fill-factor for table in order to 
-let database put row updates to the same page.
-In that case database will need less amount of random page writes. 
-This technique also prevents fragmentation so we get more robust selects. 
-Same rules are applied to an indexes. You can safely set fill-factor 
-for tables and indexes to 30%.
-
-Our production settings for frequently updated tasks table are:
-```sql
-CREATE TABLE queue_tasks (...) WITH (fillfactor=30)
-CREATE INDEX ... ON queue_tasks USING btree (...) WITH (fillfactor=30)
-``` 
-
 * Autovacuum
 
 You need to make autovacuum more aggressive in order to eliminate dead tuples. 
