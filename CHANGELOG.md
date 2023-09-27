@@ -1,9 +1,7 @@
-### NEXT_VERSION_TYPE=PATCH
-### NEXT_VERSION_DESCRIPTION_BEGIN
+## [16.1.1](https://bitbucket.yooteam.ru/projects/BACKEND-LIBRARIES/repos/db-queue/pull-requests/7) (27-09-2023)
 
 * README updated: removed obsolete instructions about how to set up fill factor for Postgresql database tables and indices.
 
-### NEXT_VERSION_DESCRIPTION_END
 ## [16.1.0](https://bitbucket.yooteam.ru/projects/BACKEND-LIBRARIES/repos/db-queue/pull-requests/6) (03-08-2023)
 
 * Changed working with seconds to milliseconds when calculating NextProcessAt field value. Working with second bring to incorrect processing delay if fractional value is used.
