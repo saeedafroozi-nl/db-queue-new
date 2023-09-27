@@ -1,5 +1,8 @@
-### NEXT_VERSION_TYPE=MAJOR|MINOR|PATCH
+### NEXT_VERSION_TYPE=PATCH
 ### NEXT_VERSION_DESCRIPTION_BEGIN
+
+* README updated: removed obsolete instructions about how to set up fill factor for Postgresql database tables and indices.
+
 ### NEXT_VERSION_DESCRIPTION_END
 ## [16.1.0](https://bitbucket.yooteam.ru/projects/BACKEND-LIBRARIES/repos/db-queue/pull-requests/6) (03-08-2023)
 
