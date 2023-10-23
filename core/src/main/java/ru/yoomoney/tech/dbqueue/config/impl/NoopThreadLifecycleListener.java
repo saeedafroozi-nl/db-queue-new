@@ -22,25 +22,4 @@ public class NoopThreadLifecycleListener implements ThreadLifecycleListener {
         return INSTANCE;
     }
 
-    @Override
-    public void started(@Nonnull QueueShardId shardId, @Nonnull QueueLocation location) {
-
-    }
-
-    @Override
-    public void executed(QueueShardId shardId, QueueLocation location,
-                         boolean taskProcessed, long threadBusyTime) {
-
-    }
-
-    @Override
-    public void finished(@Nonnull QueueShardId shardId, @Nonnull QueueLocation location) {
-
-    }
-
-    @Override
-    public void crashed(@Nonnull QueueShardId shardId, @Nonnull QueueLocation location,
-                        @Nullable Throwable exc) {
-
-    }
 }

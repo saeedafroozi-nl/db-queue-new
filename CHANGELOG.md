@@ -1,5 +1,6 @@
-### NEXT_VERSION_TYPE=MAJOR|MINOR|PATCH
+### NEXT_VERSION_TYPE=MINOR
 ### NEXT_VERSION_DESCRIPTION_BEGIN
+* New events: `noTask` and `processed` were added in `ThreadLifecycleListener`
 ### NEXT_VERSION_DESCRIPTION_END
 ## [16.1.1](https://bitbucket.yooteam.ru/projects/BACKEND-LIBRARIES/repos/db-queue/pull-requests/7) (27-09-2023)
 
