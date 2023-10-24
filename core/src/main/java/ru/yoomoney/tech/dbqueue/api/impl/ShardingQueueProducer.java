@@ -1,5 +1,9 @@
 package ru.yoomoney.tech.dbqueue.api.impl;
 
+import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
+import javax.annotation.Nonnull;
 import ru.yoomoney.tech.dbqueue.api.EnqueueParams;
 import ru.yoomoney.tech.dbqueue.api.EnqueueResult;
 import ru.yoomoney.tech.dbqueue.api.QueueProducer;
@@ -8,9 +12,6 @@ import ru.yoomoney.tech.dbqueue.api.TaskPayloadTransformer;
 import ru.yoomoney.tech.dbqueue.config.DatabaseAccessLayer;
 import ru.yoomoney.tech.dbqueue.config.QueueShard;
 import ru.yoomoney.tech.dbqueue.settings.QueueConfig;
-
-import javax.annotation.Nonnull;
-import java.util.Objects;
 
 /**
  * Wrapper for queue producer wrapper with sharding support.
@@ -58,6 +59,23 @@ public class ShardingQueueProducer<PayloadTaskT, DatabaseAccessLayerT extends Da
                 .withShardId(queueShard.getShardId())
                 .withEnqueueId(enqueueId)
                 .build();
+    }
+
+    @Override
+    public void enqueueBatch(@Nonnull List<EnqueueParams<PayloadTaskT>> enqueueParams) {
+        enqueueParams.stream()
+                .collect(Collectors.groupingBy(queueShardRouter::resolveShard))
+                .forEach((queueShard, params) -> queueShard.getDatabaseAccessLayer().transact(
+                        () -> queueShard.getDatabaseAccessLayer().getQueueDao().enqueueBatch(
+                                queueConfig.getLocation(), 
+                                params.stream()
+                                        .map(it -> new EnqueueParams<String>()
+                                                .withPayload(payloadTransformer.fromObject(it.getPayload()))
+                                                .withExecutionDelay(it.getExecutionDelay())
+                                                .withExtData(it.getExtData()))
+                                        .toList()
+                        )
+                ));
     }
 
     @Nonnull

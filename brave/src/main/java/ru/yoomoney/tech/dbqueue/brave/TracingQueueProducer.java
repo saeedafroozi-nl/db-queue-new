@@ -3,12 +3,15 @@ package ru.yoomoney.tech.dbqueue.brave;
 import brave.Span;
 import brave.Tracer;
 import brave.Tracing;
+import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.yoomoney.tech.dbqueue.api.EnqueueParams;
 import ru.yoomoney.tech.dbqueue.api.EnqueueResult;
 import ru.yoomoney.tech.dbqueue.api.QueueProducer;
 import ru.yoomoney.tech.dbqueue.api.TaskPayloadTransformer;
+import ru.yoomoney.tech.dbqueue.config.DatabaseAccessLayer;
+import ru.yoomoney.tech.dbqueue.config.QueueShard;
 import ru.yoomoney.tech.dbqueue.settings.QueueId;
 
 import javax.annotation.Nonnull;
@@ -76,6 +79,22 @@ public class TracingQueueProducer<PayloadT> implements QueueProducer<PayloadT> {
     @Override
     public EnqueueResult enqueue(@Nonnull EnqueueParams<PayloadT> enqueueParams) {
         return enqueueInternal(enqueueParams, false);
+    }
+
+    @Override
+    public void enqueueBatch(@Nonnull List<EnqueueParams<PayloadT>> enqueueParams) {
+        Span span = tracing.tracer().nextSpan();
+        span.name("qsend " + queueId.asString())
+                .tag("queue.name", queueId.asString())
+                .tag("queue.operation", "send")
+                .kind(Span.Kind.PRODUCER);
+
+        try (Tracer.SpanInScope ignored = tracing.tracer().withSpanInScope(span.start())) {
+            enqueueParams.forEach(it -> it.withExtData(traceField, spanConverter.serializeTraceContext(span.context())));
+            queueProducer.enqueueBatch(enqueueParams);
+        } finally {
+            span.finish();
+        }
     }
 
     @Nonnull

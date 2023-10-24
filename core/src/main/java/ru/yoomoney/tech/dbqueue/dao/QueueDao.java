@@ -1,5 +1,6 @@
 package ru.yoomoney.tech.dbqueue.dao;
 
+import java.util.List;
 import ru.yoomoney.tech.dbqueue.api.EnqueueParams;
 import ru.yoomoney.tech.dbqueue.settings.QueueLocation;
 
@@ -21,6 +22,15 @@ public interface QueueDao {
      * @return Identifier (sequence id) of new inserted task.
      */
     long enqueue(@Nonnull QueueLocation location, @Nonnull EnqueueParams<String> enqueueParams);
+    
+    /**
+     * Add a new task in the queue for processing.
+     *
+     * @param location      Queue location.
+     * @param enqueueParams Parameters of the task
+     * @return Identifier (sequence id) of new inserted task.
+     */
+    void enqueueBatch(@Nonnull QueueLocation location, @Nonnull List<EnqueueParams<String>> enqueueParams);
 
     /**
      * Remove (delete) task from the queue.
