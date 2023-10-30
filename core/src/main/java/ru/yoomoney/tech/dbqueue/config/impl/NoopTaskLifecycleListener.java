@@ -24,33 +24,4 @@ public final class NoopTaskLifecycleListener implements TaskLifecycleListener {
         return INSTANCE;
     }
 
-    @Override
-    public void picked(@Nonnull QueueShardId shardId, @Nonnull QueueLocation location,
-                       @Nonnull TaskRecord taskRecord, long pickTaskTime) {
-
-    }
-
-    @Override
-    public void started(@Nonnull QueueShardId shardId, @Nonnull QueueLocation location,
-                        @Nonnull TaskRecord taskRecord) {
-
-    }
-
-    @Override
-    public void executed(@Nonnull QueueShardId shardId, @Nonnull QueueLocation location,
-                         @Nonnull TaskRecord taskRecord, @Nonnull TaskExecutionResult executionResult, long processTaskTime) {
-
-    }
-
-    @Override
-    public void finished(@Nonnull QueueShardId shardId, @Nonnull QueueLocation location,
-                         @Nonnull TaskRecord taskRecord) {
-
-    }
-
-    @Override
-    public void crashed(@Nonnull QueueShardId shardId, @Nonnull QueueLocation location,
-                        @Nonnull TaskRecord taskRecord, @Nullable Exception exc) {
-
-    }
 }

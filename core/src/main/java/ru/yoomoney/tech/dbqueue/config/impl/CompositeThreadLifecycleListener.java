@@ -57,4 +57,15 @@ public class CompositeThreadLifecycleListener implements ThreadLifecycleListener
     public void crashed(@Nonnull QueueShardId shardId, @Nonnull QueueLocation location, @Nullable Throwable exc) {
         reverseListeners.forEach(l -> l.crashed(shardId, location, exc));
     }
+
+    @Override
+    public void noTask(@Nonnull QueueShardId shardId, @Nonnull QueueLocation location) {
+        reverseListeners.forEach(l -> l.noTask(shardId, location));
+    }
+
+    @Override
+    public void processed(@Nonnull QueueShardId shardId, @Nonnull QueueLocation location) {
+        reverseListeners.forEach(l -> l.processed(shardId, location));
+    }
+    
 }

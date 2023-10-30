@@ -27,8 +27,9 @@ public interface TaskLifecycleListener {
      * @param taskRecord   Raw task data.
      * @param pickTaskTime Time spent on picking the task from the queue in millis.
      */
-    void picked(@Nonnull QueueShardId shardId, @Nonnull QueueLocation location, @Nonnull TaskRecord taskRecord,
-                long pickTaskTime);
+    default void picked(@Nonnull QueueShardId shardId, @Nonnull QueueLocation location, @Nonnull TaskRecord taskRecord,
+                long pickTaskTime) {
+    }
 
     /**
      * The start event of task processing.
@@ -41,7 +42,8 @@ public interface TaskLifecycleListener {
      * @param location   Queue location.
      * @param taskRecord Raw task data.
      */
-    void started(@Nonnull QueueShardId shardId, @Nonnull QueueLocation location, @Nonnull TaskRecord taskRecord);
+    default void started(@Nonnull QueueShardId shardId, @Nonnull QueueLocation location, @Nonnull TaskRecord taskRecord) {
+    }
 
     /**
      * Event for completion of client logic when task processing.
@@ -56,8 +58,9 @@ public interface TaskLifecycleListener {
      * @param executionResult Result of task processing.
      * @param processTaskTime Time spent on task processing in millis, without the time for task picking from the queue.
      */
-    void executed(@Nonnull QueueShardId shardId, @Nonnull QueueLocation location, @Nonnull TaskRecord taskRecord,
-                  @Nonnull TaskExecutionResult executionResult, long processTaskTime);
+    default void executed(@Nonnull QueueShardId shardId, @Nonnull QueueLocation location, @Nonnull TaskRecord taskRecord,
+                  @Nonnull TaskExecutionResult executionResult, long processTaskTime) {
+    }
 
     /**
      * Event for completion the task execution in the queue.
@@ -71,7 +74,8 @@ public interface TaskLifecycleListener {
      * @param location   Queue location.
      * @param taskRecord Raw task data.
      */
-    void finished(@Nonnull QueueShardId shardId, @Nonnull QueueLocation location, @Nonnull TaskRecord taskRecord);
+    default void finished(@Nonnull QueueShardId shardId, @Nonnull QueueLocation location, @Nonnull TaskRecord taskRecord) {
+    }
 
 
     /**
@@ -86,7 +90,8 @@ public interface TaskLifecycleListener {
      * @param taskRecord Raw task data.
      * @param exc        An error caused the crash.
      */
-    void crashed(@Nonnull QueueShardId shardId, @Nonnull QueueLocation location, @Nonnull TaskRecord taskRecord,
-                 @Nullable Exception exc);
+    default void crashed(@Nonnull QueueShardId shardId, @Nonnull QueueLocation location, @Nonnull TaskRecord taskRecord,
+                 @Nullable Exception exc) {
+    }
 
 }

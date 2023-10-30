@@ -63,10 +63,14 @@ public class QueueTaskPoller {
                         millisTimeProvider.getMillis() - startTime);
 
                 switch (queueProcessingStatus) {
-                    case SKIPPED -> queueLoop.doWait(pollSettings.getNoTaskTimeout(),
-                            QueueLoop.WaitInterrupt.ALLOW);
-                    case PROCESSED -> queueLoop.doWait(pollSettings.getBetweenTaskTimeout(),
-                            QueueLoop.WaitInterrupt.DENY);
+                    case SKIPPED -> {
+                        threadLifecycleListener.noTask(shardId, queueConsumer.getQueueConfig().getLocation());
+                        queueLoop.doWait(pollSettings.getNoTaskTimeout(), QueueLoop.WaitInterrupt.ALLOW);
+                    }
+                    case PROCESSED -> {
+                        threadLifecycleListener.processed(shardId, queueConsumer.getQueueConfig().getLocation());
+                        queueLoop.doWait(pollSettings.getBetweenTaskTimeout(), QueueLoop.WaitInterrupt.DENY);
+                    }
                     default -> throw new IllegalStateException("unknown task loop result" + queueProcessingStatus);
                 }
             } catch (Throwable e) {

@@ -44,11 +44,6 @@ public class LoggingTaskLifecycleListener implements TaskLifecycleListener {
     }
 
     @Override
-    public void picked(@Nonnull QueueShardId shardId, @Nonnull QueueLocation location,
-                       @Nonnull TaskRecord taskRecord, long pickTaskTime) {
-    }
-
-    @Override
     public void started(@Nonnull QueueShardId shardId, @Nonnull QueueLocation location,
                         @Nonnull TaskRecord taskRecord) {
         log.info("consuming task: id={}, attempt={}", taskRecord.getId(), taskRecord.getAttemptsCount());
@@ -68,11 +63,6 @@ public class LoggingTaskLifecycleListener implements TaskLifecycleListener {
             case FAIL -> log.info("task failed: id={}, time={}", taskRecord.getId(), processTaskTime);
             default -> log.warn("unknown action type: type={}", executionResult.getActionType());
         }
-    }
-
-    @Override
-    public void finished(@Nonnull QueueShardId shardId, @Nonnull QueueLocation location,
-                         @Nonnull TaskRecord taskRecord) {
     }
 
     @Override
