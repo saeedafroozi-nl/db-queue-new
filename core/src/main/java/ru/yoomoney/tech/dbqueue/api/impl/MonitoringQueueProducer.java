@@ -1,5 +1,9 @@
 package ru.yoomoney.tech.dbqueue.api.impl;
 
+import java.util.List;
+import java.util.Objects;
+import java.util.function.BiConsumer;
+import javax.annotation.Nonnull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.yoomoney.tech.dbqueue.api.EnqueueParams;
@@ -8,10 +12,6 @@ import ru.yoomoney.tech.dbqueue.api.QueueProducer;
 import ru.yoomoney.tech.dbqueue.api.TaskPayloadTransformer;
 import ru.yoomoney.tech.dbqueue.internal.processing.MillisTimeProvider;
 import ru.yoomoney.tech.dbqueue.settings.QueueId;
-
-import javax.annotation.Nonnull;
-import java.util.Objects;
-import java.util.function.BiConsumer;
 
 /**
  * Wrapper for queue producer with logging and monitoring support
@@ -87,6 +87,15 @@ public class MonitoringQueueProducer<PayloadT> implements QueueProducer<PayloadT
         long elapsedTime = millisTimeProvider.getMillis() - startTime;
         monitoringCallback.accept(enqueueResult, elapsedTime);
         return enqueueResult;
+    }
+
+    @Override
+    public void enqueueBatch(@Nonnull List<EnqueueParams<PayloadT>> enqueueParams) {
+        log.info("enqueuing tasks batch: queue={}, batchSize={}", queueId, enqueueParams.size());
+        long startTime = millisTimeProvider.getMillis();
+        queueProducer.enqueueBatch(enqueueParams);
+        long elapsedTime = millisTimeProvider.getMillis() - startTime;
+        log.info("batch enqueued: time(millis)={}", elapsedTime);
     }
 
     @Nonnull

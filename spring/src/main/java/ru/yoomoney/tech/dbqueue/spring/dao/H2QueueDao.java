@@ -1,5 +1,11 @@
 package ru.yoomoney.tech.dbqueue.spring.dao;
 
+import java.time.Duration;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
+import javax.annotation.Nonnull;
 import org.springframework.jdbc.core.JdbcOperations;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -9,12 +15,6 @@ import ru.yoomoney.tech.dbqueue.api.EnqueueParams;
 import ru.yoomoney.tech.dbqueue.config.QueueTableSchema;
 import ru.yoomoney.tech.dbqueue.dao.QueueDao;
 import ru.yoomoney.tech.dbqueue.settings.QueueLocation;
-
-import javax.annotation.Nonnull;
-import java.time.Duration;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.stream.Collectors;
 
 import static java.util.Objects.requireNonNull;
 
@@ -63,6 +63,11 @@ public class H2QueueDao implements QueueDao {
             throw new IllegalArgumentException("id can't be null");
         }
         return id;
+    }
+
+    @Override
+    public void enqueueBatch(@Nonnull QueueLocation location, @Nonnull List<EnqueueParams<String>> enqueueParams) {
+        throw new UnsupportedOperationException("batch enqueue is not supported for this type of database");
     }
 
     @Override

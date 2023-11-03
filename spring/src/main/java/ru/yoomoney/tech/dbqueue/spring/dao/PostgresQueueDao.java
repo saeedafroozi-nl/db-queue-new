@@ -1,5 +1,11 @@
 package ru.yoomoney.tech.dbqueue.spring.dao;
 
+import java.time.Duration;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
+import javax.annotation.Nonnull;
 import org.springframework.jdbc.core.JdbcOperations;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -7,12 +13,6 @@ import ru.yoomoney.tech.dbqueue.api.EnqueueParams;
 import ru.yoomoney.tech.dbqueue.config.QueueTableSchema;
 import ru.yoomoney.tech.dbqueue.dao.QueueDao;
 import ru.yoomoney.tech.dbqueue.settings.QueueLocation;
-
-import javax.annotation.Nonnull;
-import java.time.Duration;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.stream.Collectors;
 
 import static java.util.Objects.requireNonNull;
 
@@ -59,6 +59,26 @@ public class PostgresQueueDao implements QueueDao {
         enqueueParams.getExtData().forEach(params::addValue);
         return requireNonNull(jdbcTemplate.queryForObject(
                 enqueueSqlCache.computeIfAbsent(location, this::createEnqueueSql), params, Long.class));
+    }
+
+    @Override
+    public void enqueueBatch(@Nonnull QueueLocation location, @Nonnull List<EnqueueParams<String>> enqueueParams) {
+        requireNonNull(location);
+        requireNonNull(enqueueParams);
+        
+        MapSqlParameterSource[] paramsList = enqueueParams.stream()
+                .map(it -> {
+                    MapSqlParameterSource params = new MapSqlParameterSource()
+                            .addValue("queueName", location.getQueueId().asString())
+                            .addValue("payload", it.getPayload())
+                            .addValue("executionDelay", it.getExecutionDelay().toMillis());
+                    queueTableSchema.getExtFields().forEach(paramName -> params.addValue(paramName, null));
+                    it.getExtData().forEach(params::addValue);
+                    return params;
+                })
+                .toArray(MapSqlParameterSource[]::new);
+        
+        jdbcTemplate.batchUpdate(enqueueSqlCache.computeIfAbsent(location, this::createEnqueueSql), paramsList);
     }
 
 
