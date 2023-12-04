@@ -25,7 +25,6 @@ import static java.util.Objects.requireNonNull;
  * @author Oleg Kandaurov
  * @since 16.07.2017
  */
-@SuppressWarnings("rawtypes")
 @FunctionalInterface
 public interface QueueRunner {
 
@@ -54,7 +53,6 @@ public interface QueueRunner {
          * @param taskLifecycleListener слушатель процесса обработки задач
          * @return инстанс исполнителя задач
          */
-        @SuppressWarnings({"rawtypes", "unchecked"})
         public static QueueRunner create(@Nonnull QueueConsumer queueConsumer,
                                          @Nonnull QueueShard<?> queueShard,
                                          @Nonnull TaskLifecycleListener taskLifecycleListener) {

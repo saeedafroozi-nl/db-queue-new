@@ -16,7 +16,6 @@ import static java.util.Objects.requireNonNull;
  * @author Oleg Kandaurov
  * @since 09.07.2017
  */
-@SuppressWarnings({"rawtypes", "unchecked"})
 public class QueueTaskPoller {
 
     @Nonnull

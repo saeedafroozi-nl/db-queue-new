@@ -17,7 +17,6 @@ import static java.util.Objects.requireNonNull;
  * @author Oleg Kandaurov
  * @since 19.07.2017
  */
-@SuppressWarnings("rawtypes")
 public class TaskPicker {
 
     @Nonnull

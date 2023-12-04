@@ -20,7 +20,6 @@ import static java.util.Objects.requireNonNull;
  * @author Oleg Kandaurov
  * @since 16.07.2017
  */
-@SuppressWarnings("rawtypes")
 class QueueRunnerInTransaction implements QueueRunner {
 
     @Nonnull
