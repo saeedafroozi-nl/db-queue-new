@@ -33,7 +33,6 @@ import static org.mockito.Mockito.when;
  * @author Oleg Kandaurov
  * @since 04.08.2017
  */
-@SuppressWarnings("unchecked")
 public class TaskProcessorTest {
 
     @Test

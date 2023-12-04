@@ -1,5 +1,10 @@
-### NEXT_VERSION_TYPE=MAJOR|MINOR|PATCH
+### NEXT_VERSION_TYPE=MINOR
 ### NEXT_VERSION_DESCRIPTION_BEGIN
+
+* Удаление из build.gradle настроек analyseDevelopmentBranchesOnly, spotbugsEnabled, checkstyleEnabled.
+* Удаление coverage.properties, static-analysis.properties.
+* Удаление из исходного кода аннотаций @SuppressWarnings и @SuppressFBWarnings
+
 ### NEXT_VERSION_DESCRIPTION_END
 ## [17.0.0](https://bitbucket.yooteam.ru/projects/BACKEND-LIBRARIES/repos/db-queue/pull-requests/9) (03-11-2023)
 
